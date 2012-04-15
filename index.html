@@ -1,11 +1,13 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Robin Kraft</title>
-</head>
+---
+layout: default
+title: Robin Kraft
+---
 
-<body>
-    <h1>Robin Kraft's Blog!</h1>
-</body>
-</html>
-
+<div id="home">
+  <h1>Archive</h1>
+  <ul class="posts">
+    {% for post in site.posts %}
+    <li><span>{{ post.date | date_to_string }}</span> &raquo; <a href="{{ post.url }}">{{ post.title }}</a></li>
+    {% endfor %}
+  </ul>
+</div>
