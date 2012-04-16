@@ -22,7 +22,7 @@ user> (c 10 20)
 #<Coordinate (10.0, 20.0, NaN)>
 {% endhighlight %}
 
-And there you have it. Create a polygon by stringing together coordinates in a vector, being careful to close the polygon by making the first and last coordinates the same. Note that `polygon` expects two rings - the external border and a hole - but you can create a polygon without a hole by replacing the hole linear-string with `nil`:
+And there you have it. Create a polygon by stringing together coordinates in a vector, being careful to close the polygon by making the first and last coordinates the same. Note that `polygon` expects two rings - the external border and a hole - but you can create a polygon without a hole by replacing the hole linear-ring with `nil`:
 
 {% highlight clojure %}
 user> (polygon (linear-ring [(c 20 40) (c 20 46) (c 34 56) (c 20 40)]) nil)
