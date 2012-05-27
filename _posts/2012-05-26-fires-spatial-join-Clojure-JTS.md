@@ -1,10 +1,10 @@
 ---
 layout: post
-title: Fires data and Spatial Joins with JTS
+title: Fires data and spatial joins with Clojure and JTS
 ---
 <p class="meta"> 26 May 2012 - San Francisco</p>
 
-Fires data and Spatial Joins with Clojure and JTS
+Fires data and spatial joins with Clojure and JTS
 ============
 
 I've got a soft spot for spatial joins. This is partly because they're so darn useful, but also because a spatial join with raster data (e.g. the ArcGIS Sample tool) was one of the first GIS operation I coded up by hand, using Python and Numpy. Ah, those were the days ...
