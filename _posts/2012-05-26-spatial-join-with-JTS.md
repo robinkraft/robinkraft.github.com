@@ -1,9 +1,9 @@
 ---
 layout: post
-title: Fires, and Spatial Joins with JTS
+title: Fires and Spatial Joins with JTS
 ---
 
-Introduction
+Fires and Spatial Joins with JTS
 ============
 
 I've got a soft spot for spatial joins and the Sample tool in Spatial Analyst for ArcGIS. This is partly because it's so darn useful and comes up all the time, but also raster sampling was one of the first GIS operation I coded up by hand, using Python and Numpy. Ah, those were the days ...
@@ -59,7 +59,7 @@ Then we load the polygon:
   (let [poly-str (slurp path)]
     (read-wkt-str poly-str)))
 
-(def poly (load-poly "path-to-data"))
+(def poly (load-poly "/Users/robin/data/usa_poly.csv"))
 (envelope poly)
 => #<Polygon POLYGON ((-179.15055847168 18.9098606109619,
     -179.15055847168 71.3906841278076, 179.773408889771
