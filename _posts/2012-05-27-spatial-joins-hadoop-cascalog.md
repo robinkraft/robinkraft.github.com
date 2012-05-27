@@ -17,6 +17,17 @@ The query
 
  Full code is [available on Github](https://github.com/robinkraft/spatialog/blob/develop/src/clj/spatialog/easyjoin.clj). Here's the main query:
 
+{% highlight clojure %}
+(defn join-n-count
+  [poly-path points-path intersect-op]
+  (let [[iso poly-geom] (import-poly poly-path)
+        pts-tap (points-tap points-path)]
+    (<- [?count ?iso]
+        (pts-tap ?lat ?lon)
+        (add-fields iso :> ?iso)
+        (intersect-op [poly-geom] ?lat ?lon)
+        (c/count ?count))))
+{% endhighlight %}
 
 `join-n-count` has two interesting features.
 
@@ -26,6 +37,17 @@ This mainly means that each machine gets its own copy of the data structure, ser
 
 Second, the `intersect-op` argument to `join-n-count` expects a parameterized [custom operation](https://github.com/nathanmarz/cascalog/wiki/Guide-to-custom-operations) for intersection. This makes it easy to simply count fires falling inside the US polygon envelope (or bounding box), then do a full intersection. The query itself doesn't change, but boy the run times sure do! Envelope intersects are much faster, given the simple (rectangular) polygon geometry.
 
+{% highlight clojure }%
+(deffilterop [intersects-op [poly]] [lat lon]
+  "Parameterized intersect"
+  (let [pt (latlon->point lat lon)]
+    (intersects? poly pt)))
+
+(deffilterop [intersects-env-op [poly]] [lat lon]
+  "Parameterized intersect only checks envelope intersect"
+  (let [pt (latlon->point lat lon)]
+    (intersects? (envelope poly) pt)))
+{% endhighlight %}
 
 The main query has three parts. First, it loads the polygon boundary, then loads all the fires points in the map stage, performing the intersect operation on the reduce side. Each reducer emits a tuple of the number of fires it saw that fell inside the polygon (or its envelope). The final step combines these separate results to give a final total of fires inside the US polygon or its envelope.
 
@@ -34,9 +56,25 @@ Test environment
 
 I'm using [Elastic MapReduce](http://aws.amazon.com/elasticmapreduce/) from Amazon Web Services, using m2.4xlarge spot instances with 68.4gb of RAM and 8 virtual cores. This works out to 30 mappers and 24 reducers per machine. I'm working with a 1-machine "cluster" and a 10-machine cluster. Set up is simple:
 
+{% highlight bash %}
+git clone git@github.com:robinkraft/spatialog.git
+cd spatialog
+lein uberjar
+
+zip -d spatialog-0.1.0-SNAPSHOT-standalone.jar org/apache/xerces/\*
+zip -d spatialog-0.1.0-SNAPSHOT-standalone.jar META-INF/services/\*
+
+screen -Lm hadoop jar spatialog-0.1.0-SNAPSHOT-standalone.jar clojure.main
+{% endhighlight %}
 
 From the REPL:
 
+{% highlight clojure %}
+(use 'spatialog.easyjoin)
+(in-ns 'spatialog.easyjoin)
+;; sample query
+(??- (parameterized-join "s3n://formaresults/test/gadm/usa.csv" "s3n://formaresults/test/firesnoheader/firesnoheader" intersects-env-op))
+{% endhighlight %}
 
 The lines above deleting files from the jar file are my workaround to an [issue](https://www.google.com/search?sugexp=chrome,mod=5&sourceid=chrome&ie=UTF-8&q=jts+xerces+version) with JTS's dependency on an old version of [Apache Xerces](http://xerces.apache.org/). This causes Cascalog jobs to fail for reasons I have not yet uncovered, but all is not lost! If you're working locally, just delete `xercesImpl-2.4.0.jar` file from the `lib` folder in your project. Some day I hope to understand why Xerces causes problems. [Stacktrace here](https://gist.github.com/2802301).
 
