@@ -28,7 +28,7 @@ The file looks like this:
     USA,"SRID=4326;MULTIPOLYGON(((179.585615158081    
     52.0173091888428,179.652040481567 52.0247783660889 ...)))"
 
-A line from the fires data looks like this:
+A line from the fires data represents one 1km^2 pixel, and looks like this:
 
     -18.735,144.626,324.8,1.1,1.0,05/13/2012,0030,T,78,5.0,297.2,24.9
 
@@ -127,8 +127,10 @@ This exercise is going to be a problem. I happen to know (foreshadowing the next
 
 So the question is, ignoring super-fast non-intersecting operations, how long should the exact intersection take?
 
-    (/ (/ (/ (* 8300000 .268) 60) 60) 24.)
-    => 25.8 days
+{% highlight clojure %}
+(/ (/ (/ (* 8300000 .268) 60) 60) 24.)
+=> 25.8 days
+{% end highlight %}
 
 That's crazy! For completeness, note that ArcGIS chokes with a memory error after about 5 hours of work on a spatial join.
 
