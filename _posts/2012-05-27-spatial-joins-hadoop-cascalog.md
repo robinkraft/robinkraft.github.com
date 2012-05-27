@@ -56,16 +56,14 @@ Test environment
 
 I'm using [Elastic MapReduce](http://aws.amazon.com/elasticmapreduce/) from Amazon Web Services, using m2.4xlarge spot instances with 68.4gb of RAM and 8 virtual cores. This works out to 30 mappers and 24 reducers per machine. I'm working with a 1-machine "cluster" and a 10-machine cluster. Set up is simple:
 
-{% highlight bash %}
-git clone git@github.com:robinkraft/spatialog.git
-cd spatialog
-lein uberjar
+    git clone git@github.com:robinkraft/spatialog.git
+    cd spatialog
+    lein uberjar
 
-zip -d spatialog-0.1.0-SNAPSHOT-standalone.jar org/apache/xerces/\*
-zip -d spatialog-0.1.0-SNAPSHOT-standalone.jar META-INF/services/\*
+    zip -d spatialog-0.1.0-SNAPSHOT-standalone.jar org/apache/xerces/\*
+    zip -d spatialog-0.1.0-SNAPSHOT-standalone.jar META-INF/services/\*
 
-screen -Lm hadoop jar spatialog-0.1.0-SNAPSHOT-standalone.jar clojure.main
-{% endhighlight %}
+    screen -Lm hadoop jar spatialog-0.1.0-SNAPSHOT-standalone.jar clojure.main
 
 From the REPL:
 
