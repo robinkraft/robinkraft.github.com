@@ -2,6 +2,7 @@
 layout: post
 title: Fires and Spatial Joins with JTS
 ---
+<p class="meta"> 26 May 2012 - San Francisco</p>
 
 Fires and Spatial Joins with JTS
 ============
