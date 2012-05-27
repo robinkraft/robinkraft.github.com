@@ -99,10 +99,10 @@ That point happens to be in northeast Australia. So let's try another random lat
 
 (def usa-poly-map {:geom poly :attributes {:iso "USA"}})
 (def yellowstone-pt (point (c -110.560913 44.801327)))
-;=> #<Point POINT (-110.560913 44.801327)>
+=> #<Point POINT (-110.560913 44.801327)>
 
 (spat-join usa-poly-map yellowstone-pt)
-;=> {:geom #<Point POINT (-110.560913 44.801327)> :attributes {:iso "USA"}}
+=> {:geom #<Point POINT (-110.560913 44.801327)> :attributes {:iso "USA"}}
 {% endhighlight %}
 
 It works! Now we just need to loop through 46 million fires points, storing the count by iso code, and then we would have a spatial join.
