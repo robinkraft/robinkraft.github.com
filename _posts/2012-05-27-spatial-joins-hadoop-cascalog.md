@@ -4,7 +4,7 @@ title: Spatial joins with Hadoop and Cascalog
 ---
 <p class="meta"> 27 May 2012 - San Francisco</p>
 
-* Spatial joins with Hadoop and Cascalog
+Spatial joins with Hadoop and Cascalog
 ======================================
 
 [Last
@@ -12,22 +12,11 @@ time](http://robinkraft.github.com/2012/05/26/fires-spatial-join-Clojure-JTS.htm
 
 But! We have Hadoop! This embarassingly parallel problem would be much more tractable if expressed as map-reduce jobs. We'll let [Cascalog](http://github.com/nathanmarz/cascalog) handle mapping and reducing, I just have to write a few queries.
 
-* The query
+The query
 -----------
 
  Full code is [available on Github](https://github.com/robinkraft/spatialog/blob/develop/src/clj/spatialog/easyjoin.clj). Here's the main query:
 
-{% highlight clojure %}
-(defn join-n-count
-  [poly-path points-path intersect-op]
-  (let [[iso poly-geom] (import-poly poly-path)
-        pts-tap (points-tap points-path)]
-    (<- [?count ?iso]
-        (pts-tap ?lat ?lon)
-        (add-fields iso :> ?iso)
-        (intersect-op [poly-geom] ?lat ?lon)
-        (c/count ?count))))
-{% endhighlight %}
 
 `join-n-count` has two interesting features.
 
@@ -37,51 +26,26 @@ This mainly means that each machine gets its own copy of the data structure, ser
 
 Second, the `intersect-op` argument to `join-n-count` expects a parameterized [custom operation](https://github.com/nathanmarz/cascalog/wiki/Guide-to-custom-operations) for intersection. This makes it easy to simply count fires falling inside the US polygon envelope (or bounding box), then do a full intersection. The query itself doesn't change, but boy the run times sure do! Envelope intersects are much faster, given the simple (rectangular) polygon geometry.
 
-{% highlight clojure }%
-(deffilterop [intersects-op [poly]] [lat lon]
-  "Parameterized intersect"
-  (let [pt (latlon->point lat lon)]
-    (intersects? poly pt)))
-
-(deffilterop [intersects-env-op [poly]] [lat lon]
-  "Parameterized intersect only checks envelope intersect"
-  (let [pt (latlon->point lat lon)]
-    (intersects? (envelope poly) pt)))
-{% endhighlight %}
 
 The main query has three parts. First, it loads the polygon boundary, then loads all the fires points in the map stage, performing the intersect operation on the reduce side. Each reducer emits a tuple of the number of fires it saw that fell inside the polygon (or its envelope). The final step combines these separate results to give a final total of fires inside the US polygon or its envelope.
 
-* Test environment
+Test environment
 ------------------
 
 I'm using [Elastic MapReduce](http://aws.amazon.com/elasticmapreduce/) from Amazon Web Services, using m2.4xlarge spot instances with 68.4gb of RAM and 8 virtual cores. This works out to 30 mappers and 24 reducers per machine. I'm working with a 1-machine "cluster" and a 10-machine cluster. Set up is simple:
 
-    git clone git@github.com:robinkraft/spatialog.git
-    cd spatialog
-    lein uberjar
 
-    zip -d spatialog-0.1.0-SNAPSHOT-standalone.jar org/apache/xerces/\*
-    zip -d spatialog-0.1.0-SNAPSHOT-standalone.jar META-INF/services/\*
+From the REPL:
 
-    screen -Lm hadoop jar spatialog-0.1.0-SNAPSHOT-standalone.jar clojure.main
-
-
-{% highlight clojure %}
-(use 'spatialog.easyjoin)
-(in-ns 'spatialog.easyjoin)
-
-;; sample query
-(??- (parameterized-join "s3n://formaresults/test/gadm/usa.csv" "s3n://formaresults/test/firesnoheader/firesnoheader" intersects-env-op))
-{% endhighlight %}
 
 The lines above deleting files from the jar file are my workaround to an [issue](https://www.google.com/search?sugexp=chrome,mod=5&sourceid=chrome&ie=UTF-8&q=jts+xerces+version) with JTS's dependency on an old version of [Apache Xerces](http://xerces.apache.org/). This causes Cascalog jobs to fail for reasons I have not yet uncovered, but all is not lost! If you're working locally, just delete `xercesImpl-2.4.0.jar` file from the `lib` folder in your project. Some day I hope to understand why Xerces causes problems. [Stacktrace here](https://gist.github.com/2802301).
 
-* Results
+Results
 ---------
 
 Of 46 million fires detected from 2000-2012 using the MODIS sensors on Terra and Aqua, 8,331,135 fell inside the bounding envelope of the US border polygon. Of those, 950,055 were detected actually detected within the border of the United States.
 
-* Performance
+Performance
 -------------
 
 I ran three queries on each cluster on two separate fires datasets, one with just 2700 lines, the other with the full 46 million. Take the exact times with a grain of salt, rather focus on the orders of magnitude. The first run, the envelope intersect on the small dataset and small cluster, established a baseline of 8 min. Running the exact intersect on the polygon for these 2700 fires took 9 min.
@@ -90,7 +54,7 @@ The 1-machine cluster (`C1`) took 11 min. for the envelope intersect for the 46 
 
 The interesting times are for the exact intersect for all fires. `C1` never completed because I got tired of waiting. `C10` ended up finishing in 5h15, compared to about 13 min. for the envelope intersect. We can infer that `C1` likely would have finished in upwards of 50 hours. In total, `C10` used 17.5 CPU days for this job, about 1/3 less than I had expected given the performance of my iMac. The total cost of EC2 time was $45, with another $25 for the EMR service.
 
-* Discussion
+Discussion
 ------------
 
 All in all, I'm pleased that this finally worked, although the 17.5 CPU days it took seems excessive. But since I had no other viable options I can't complain. The complexity of the polygon (40+ thousand vertices) was the main contributor to the 5h15 it took to complete on the larger cluster. An otherwise identical query intersecting polygon envelopes took only 13 minutes, or 25x less time. Were it not for the small size of the files that add to Hadoop overhead, I would expect the envelope query to approach the 100x less time it takes to do the envelope intersection at the REPL. For larger files, Hadoop's IO model really gets fast, but for small files it never gets a chance to ramp up.
