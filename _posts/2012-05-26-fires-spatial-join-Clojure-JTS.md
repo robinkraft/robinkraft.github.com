@@ -37,7 +37,7 @@ A full description of the attributes is available on the [FIRMS site](http://fir
 Setup
 ----
 
-If you're up for it, create a new Clojure project and add `[cljts "0.1.0"]` to your deps to get cljts and JTS. Check out [this post](http://robinkraft.github.com/2012/04/15/JTS-and-Clojure.html) for some simple use cases. Cljts pulls in the raw JTS library if you want to use it, but more importantly gives you some convenient helper functions. Thank you [sunng](https://github.com/sunng87)! Be sure to check out the [jts](http://tsusiatsoftware.net/jts/javadoc/index.html?overview-summary.html) and [cljts](http://sunng87.github.com/cljts/) docs.
+Add `[cljts "0.1.0"]` to project.clj to get cljts and JTS. Check out [this post](http://robinkraft.github.com/2012/04/15/JTS-and-Clojure.html) for some simple use cases. Cljts pulls in the raw JTS library if you want to use it, but also gives you some convenient helper functions. Thank you [sunng](https://github.com/sunng87)! Be sure to check out the [jts](http://tsusiatsoftware.net/jts/javadoc/index.html?overview-summary.html) and [cljts](http://sunng87.github.com/cljts/) docs.
 
 Basic processing
 ----
