@@ -121,7 +121,7 @@ I don't know enough (read anything) about computational geometry to know how har
 Conclusions
 ----
 
-This exercise is going to be a problem. I happen to know (foreshadowing the next blog post) that of 46 million fires, 8.33 million fall within the USA's bounding envelope, which apparently stretches across most of the northern hemisphere (Alaska to Guam?).
+This exercise is going to be a problem. I happen to know (foreshadowing the next blog post) that of 46 million fires, 8.33 million fall within the USA's bounding envelope, which apparently stretches across most of the northern hemisphere, from Alaska to perhaps Guam. From the GADM site:
 
 ![USA in GADM](http://gadm.org/data2/img/USA_adm.png)
 
