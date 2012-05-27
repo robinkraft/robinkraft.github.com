@@ -50,7 +50,7 @@ Performance
 
 I ran three queries on each cluster on two separate fires datasets, one with just 2700 lines, the other with the full 46 million. Take the exact times with a grain of salt, rather focus on the orders of magnitude. The first run, the envelope intersect on the small dataset and small cluster, established a baseline of 8 min. Running the exact intersect on the polygon for these 2700 fires took 9 min.
 
-The 1-machine cluster (`C1`) took 11 min. for the envelope intersect for the 46 million fires - not meaningfully different from the 2700 fires above. The 10-machine cluster (`C10`) took 13 min. I chalk the longer time for the larger cluster up to the [small files problem](http://www.cloudera.com/blog/2009/02/the-small-files-problem/). Hadoop is designed to power through massive files, not tiny ones, so performance suffers.
+The 1-machine cluster `C1` took 11 min. for the envelope intersect for the 46 million fires - not meaningfully different from the 2700 fires above. The 10-machine cluster `C10` took 13 min. I chalk the longer time for the larger cluster up to the [small files problem](http://www.cloudera.com/blog/2009/02/the-small-files-problem/). Hadoop is designed to power through massive files, not tiny ones, so performance suffers.
 
 The interesting times are for the exact intersect for all fires. `C1` never completed because I got tired of waiting. `C10` ended up finishing in 5h15, compared to about 13 min. for the envelope intersect. We can infer that `C1` likely would have finished in upwards of 50 hours. In total, `C10` used 17.5 CPU days for this job, about 1/3 less than I had expected given the performance of my iMac. The total cost of EC2 time was $45, with another $25 for the EMR service.
 
