@@ -71,7 +71,10 @@ From the REPL:
 (use 'spatialog.easyjoin)
 (in-ns 'spatialog.easyjoin)
 ;; sample query
-(??- (parameterized-join "s3n://formaresults/test/gadm/usa.csv" "s3n://formaresults/test/firesnoheader/firesnoheader" intersects-env-op))
+(??- (parameterized-join 
+      "s3n://formaresults/test/gadm/usa.csv" 
+      "s3n://formaresults/test/firesnoheader/firesnoheader" 
+      intersects-env-op))
 {% endhighlight %}
 
 The lines above deleting files from the jar file are my workaround to an [issue](https://www.google.com/search?sugexp=chrome,mod=5&sourceid=chrome&ie=UTF-8&q=jts+xerces+version) with JTS's dependency on an old version of [Apache Xerces](http://xerces.apache.org/). This causes Cascalog jobs to fail for reasons I have not yet uncovered, but all is not lost! If you're working locally, just delete `xercesImpl-2.4.0.jar` file from the `lib` folder in your project. Some day I hope to understand why Xerces causes problems. [Stacktrace here](https://gist.github.com/2802301).
