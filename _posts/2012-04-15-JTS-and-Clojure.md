@@ -2,6 +2,10 @@
 layout: post
 title: JTS Topology Suite and Clojure
 ---
+<p class="meta"> 15 April 2012 - San Francisco</p>
+
+JTS Topology Suite and Clojure
+==============================
 
 This is the first in a series of posts about using the [JTS Topology Suite](http://tsusiatsoftware.net/jts/main.html) (JTS) in Clojure, particularly in conjunction with Cascalog and Hadoop. To start I'll briefly look at the setup needed for using JTS with Clojure. Further along I'll explore replicating GIS operations using Cascalog/Hadoop.
 
