@@ -17,7 +17,8 @@ I've got some 46 million points representing fires detected by the MODIS sensors
 
 I happen to have the GADM data sitting on a [CartoDB](http://www.CartoDB.com) instance, so let's just grab some well-known-text in CSV format using the CartoDB SQL API:
 
-    http://your-account.cartodb.com/api/v2/sql/?q=SELECT iso,ST_asEWKT(the_geom) AS geom FROM gadm0 WHERE iso='USA'&format=csv    
+    http://your-account.cartodb.com/api/v2/sql/?q=SELECT iso,ST_asEWKT(the_geom)
+    AS geom FROM gadm0 WHERE iso='USA'&format=csv
 
 That was easy! You can grab a zipped copy [here](https://dl.dropbox.com/u/4448384/usa_poly.csv.zip) if you want     to follow along at home. I've stripped the `iso,geom` header line for convenience.
 
@@ -60,29 +61,33 @@ Then we load the polygon:
 
 (def poly (load-poly "path-to-data"))
 (envelope poly)
-;=> 
+=> #<Polygon POLYGON ((-179.15055847168 18.9098606109619,
+    -179.15055847168 71.3906841278076, 179.773408889771
+    71.3906841278076, 179.773408889771 18.9098606109619,
+    -179.15055847168 18.9098606109619))>
+(count (coordinates poly))
+=> 40411
 {% endhighlight %}
 
 Now we've got a JTS multipolygon object. Let's create a fire point based on a coordinate:
 
 {% highlight clojure %}
 (def pt (point (c 144.626 -18.735))) ;; note the xy order
-(prn pt)
-
+=> #<Point POINT (144.626 -18.735)>
 {% endhighlight %}
 
 Now we can check intersection:
 
 {% highlight clojure %}
 (intersects? poly pt)
-;=> false
+=> false
 {% endhighlight %}
 
 That point happens to be in northeast Australia. So let's try another random latlon, from Yellowstone National Park:
 
 {% highlight clojure %}
 (intersects? poly (point (c -110.560913 44.801327)))
-;=> true
+=> true
 {% endhighlight %}
 
 {% highlight clojure %}
@@ -93,10 +98,9 @@ That point happens to be in northeast Australia. So let's try another random lat
 
 (def usa-poly-map {:geom poly :attributes {:iso "USA"}})
 (def yellowstone-pt (point (c -110.560913 44.801327)))
-(prn yellowstone-pt)
 ;=> #<Point POINT (-110.560913 44.801327)>
 
-(spat-join poly-map pt)
+(spat-join usa-poly-map yellowstone-pt)
 ;=> {:geom #<Point POINT (-110.560913 44.801327)> :attributes {:iso "USA"}}
 {% endhighlight %}
 
@@ -118,8 +122,8 @@ This exercise is going to be a problem. I happen to know (foreshadowing the next
 
 So the question is, ignoring super-fast non-intersecting operations, how long should the exact intersection take?
 
-    (/ (/ (/ (* 8.3 million points .268 seconds/point) 60) 60) 24.)
-    ;=> 25.8 days
+    (/ (/ (/ (* 8300000 .268) 60) 60) 24.)
+    => 25.8 days
 
 That's crazy! For completeness, note that ArcGIS chokes with a memory error after about 5 hours of work on a spatial join.
 
