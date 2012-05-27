@@ -130,7 +130,7 @@ So the question is, ignoring super-fast non-intersecting operations, how long sh
 {% highlight clojure %}
 (/ (/ (/ (* 8300000 .268) 60) 60) 24.)
 => 25.8 days
-{% end highlight %}
+{% endhighlight %}
 
 That's crazy! For completeness, note that ArcGIS chokes with a memory error after about 5 hours of work on a spatial join.
 
