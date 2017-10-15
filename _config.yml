@@ -2,7 +2,7 @@ auto:        false
 destination: _site
 permalink:   pretty
 pygments:    true
-markdown:    maruku
+markdown:    kramdown
 permalink:   date
 exclude:
 - README.md
