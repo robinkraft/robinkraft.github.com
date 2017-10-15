@@ -1,7 +1,7 @@
 auto:        false
 destination: _site
 permalink:   pretty
-pygments:    true
+highlighter: rouge
 markdown:    kramdown
 permalink:   date
 exclude:
