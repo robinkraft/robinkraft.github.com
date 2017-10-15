@@ -9,4 +9,4 @@ Interactive satellite map of NorCal fires
 
 [Go here to browse the map](https://robinkraft.github.io/norcal-fires-imagery/compare.html).
 
-![](https://i.imgur.com/tXxTnLh.png)
+<img src="https://i.imgur.com/tXxTnLh.png" alt="satellite map" style="width: 600px;"/>
